@@ -1,0 +1,6 @@
+# 0.0.1 ~ 0.0.3 버전 동기화 제외
+netstat_dev_v0.0.1.*
+netstat_dev_v0.0.2.*
+netstat_dev_v0.0.3.*
+
+*.conf

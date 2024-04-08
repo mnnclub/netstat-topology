@@ -1,0 +1,78 @@
+## 포트번호 숫자를 서비스명으로 변경
+# 버그: 문자열바꿀때 포함해서 바꿈
+#   예: 3011 = mongod 로 한 상태에서 23011 포트는 2monod 로 바뀌는 버그가 있으니, 그냥 맨위에 23011 = 23011 추가할것
+[port_service_map]
+22 = ssh
+23 = telnet
+25 = smtp
+53 = dns
+80 = http
+110 = pop3
+143 = imap
+443 = https
+465 = smtps
+587 = smtp
+993 = imaps
+995 = pop3s
+1433 = mssql
+1521 = oracle
+3306 = mysql
+3389 = rdp
+5432 = postgresql
+8080 = http
+8443 = https
+3011 = mongod
+5600 = vnc
+5060 = sip
+5061 = sips
+
+
+
+## IP주소를 DNS명으로 변경
+# 줄바꿈 대상: 첫번째 - (대시)문자열, 모든 .(쩜)
+[dns_name_map]
+203.248.240.140 = time.bora.net
+142.250.206.206 = google.com
+74.6.231.21 = yahoo.com
+
+
+
+# 체크할 인스턴스 리스트로 ssh접속해서 netstat 명령실행하고 토폴로지 그림상에 동그란 노드에 해당함
+# -> 2024.4.8~ 이후 작업예정
+[instance_map]
+127.0.0.1 = localhost.localdomain
+10.0.0.1 = 10-0-0-1
+192.168.0.2 = 192-168-0-2
+
+
+
+
+## 그래프 그리기 옵션
+# node 는 동그라미로 표시한 인스턴스(서버)를 의미
+# edge 는 선으로 연결된 인스턴스간의 통신을 의미
+# arrow 는 edge 에 방향성을 부여한 것, 화살표 ( 화살표 받은것 = 서버, 화살표 보낸것 = 클라이언트 )
+# connectionstyle 은 화살표의 모양을 결정함, rad=0.05 는 화살표 선이 곡선각도로 나가게함
+#
+# connectionstyle 옵션은 다양한 스타일을 지원합니다. 몇 가지 일반적인 스타일은 다음과 같습니다:
+# "arc3": 노드와 엣지를 부드러운 곡선으로 연결합니다.
+# "arc": 노드와 엣지를 곡선으로 연결합니다.
+# "angle3": 노드와 엣지를 각진 선분으로 연결합니다.
+# "angle": 노드와 엣지를 각진 선분으로 연결하고, 선분의 길이를 조절할 수 있습니다.
+# "bar": 노드와 엣지를 수직 막대로 연결합니다.
+# "round": 노드와 엣지를 둥근 선분으로 연결합니다.
+[draw_options]
+with_labels = True
+node_size = 250
+node_color = orange
+font_size = 3
+font_color = black
+font_weight = light
+edge_color = green
+width = 0.3
+style = dashed
+alpha = 0.9
+arrowsize = 5
+arrowstyle = ->
+connectionstyle = arc3,rad=0.001
+min_source_margin = 1
+min_target_margin = 1

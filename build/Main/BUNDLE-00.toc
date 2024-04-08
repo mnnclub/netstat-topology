@@ -1,0 +1,1 @@
+([('main', '/Users/jhuinyumaegbug/GIT/draw-netstat/dist/main', 'EXECUTABLE')],)
