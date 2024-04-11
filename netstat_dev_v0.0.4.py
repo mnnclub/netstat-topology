@@ -3,7 +3,7 @@
 #  --icon=DALLE_hhji_20240408_Create_a_detailed_illustration_of_a_fully_connected.webp netstat_dev_v0.0.4.py
 
 # Compile Option for Windows
-# pyinstaller --onefile --windowed --distpath=./dist_win --icon=sample/DALLE_hhji_20240408_Create_a_detailed_illustration_of_a_fully_connected.webp netstat_dev_v0.0.4.py
+# pyinstaller --onefile --console --distpath=./dist_win --icon=sample/DALLE_hhji_20240408_Create_a_detailed_illustration_of_a_fully_connected.webp netstat_dev_v0.0.4.py
 
 import paramiko
 from scp import SCPClient, SCPException
