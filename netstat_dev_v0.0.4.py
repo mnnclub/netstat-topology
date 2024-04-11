@@ -2,6 +2,9 @@
 # pyinstaller --onefile --windowed --distpath=./dist_mac \
 #  --icon=DALLE_hhji_20240408_Create_a_detailed_illustration_of_a_fully_connected.webp netstat_dev_v0.0.4.py
 
+# Compile Option for Windows
+# pyinstaller --onefile --windowed --distpath=./dist_win --icon=sample/DALLE_hhji_20240408_Create_a_detailed_illustration_of_a_fully_connected.webp netstat_dev_v0.0.4.py
+
 import paramiko
 from scp import SCPClient, SCPException
 import getpass
@@ -70,13 +73,13 @@ config = configparser.ConfigParser()
 # Read the configuration from the file
 config.read('name_map.conf')
 
-# 'instance_checklist' 섹션에서 인스턴스 목록 읽기
+# Read the instance list from the 'instance_checklist' section
 instance_map = {}
 for ip, name in config.items('instance_map'):
     instance_map[ip] = name
 
 
-##### 서버 확인작업 메인코드 시작 #####
+##### Main code for server verification starts here #####
 CurrentTime = datetime.now().strftime('%Y-%m-%d %H:%M')
 with open('netstat.conf', 'w') as file:
     file.write(f"## {CurrentTime} ##\n")
@@ -86,46 +89,44 @@ USER = input('Enter USER: ')
 PW = getpass.getpass('Enter password: ')
 PORT = 22
 
-## netstat.conf 주석공백 제외한 모든라인의 맨앞에 서버IP 추가해주는 함수
+## Function to add server IP at the beginning of every line in netstat.conf, excluding comments and blank lines
 filename = "netstat.conf"
 def add_ip_to_file_exclude_comments_and_blanks(filename, ip="127.0.0.1"):
-    with open(filename, 'r') as file:  # 원본 파일 읽기
+    with open(filename, 'r') as file:  # Read Original File
         lines = file.readlines()
 
-    # 주석이나 공백 라인을 제외하고 IP 추가
+    # Append IP exclude # comment or blank line
     new_lines = []
     for line in lines:
         stripped_line = line.strip()  # 앞뒤 공백 제거
-        if stripped_line and not stripped_line.startswith("#"):  # 공백 라인이 아니고 주석도 아닐 때
+        if stripped_line and not stripped_line.startswith("#"):  # if not Blank line or # comment
             new_lines.append(f"{ip} {line}")
         else:
-            new_lines.append(line)  # 공백 라인이나 주석 라인은 그대로 유지
+            new_lines.append(line)  # Keep Blank line or # comment
 
-    with open(filename, 'w') as file:  # 수정된 내용을 파일에 쓰기
+    with open(filename, 'w') as file:  # Write file with modified content
         file.writelines(new_lines)
 
 
-# 맨위 2개 인스턴스만 테스트
-instance_map_subset = dict(list(instance_map.items())[:2])
-
+# Test with only 2 upper line
+#instance_map_subset = dict(list(instance_map.items())[:2])
 #for name, ip in instance_map_subset.items():
+
 for name, ip in instance_map.items():
     print(f"Checking {name} ({ip})...")
     HOST = ip
     ssh_manager = SSHManager()
     try:
-        ssh_manager.create_ssh_client(HOST,PORT,USER,PW) # 세션생성
+        ssh_manager.create_ssh_client(HOST,PORT,USER,PW) # create session
 
-        # 0. 운영체제 버전체크
-        ssh_manager.send_file("netstat.sh", "netstat.sh") # 파일전송
-        netstat_result = ssh_manager.send_command("chmod 700 netstat.sh; ./netstat.sh") # 결과받기
-        ssh_manager.send_command("rm -f netstat.sh") # 파일삭제
-        ssh_manager.close_ssh_client()      # 세선종료
+        ssh_manager.send_file("netstat.sh", "netstat.sh")
+        netstat_result = ssh_manager.send_command("chmod 700 netstat.sh; ./netstat.sh")
+        ssh_manager.send_command("rm -f netstat.sh")
+        ssh_manager.close_ssh_client()
 
 #        print(netstat_result)
-
         
-        # 결과를 파일에 추가
+        # Append result to netstat.conf file
         with open('netstat.conf', 'a+') as file:
             for item in netstat_result:
                 file.write(item.strip() + '\n')
@@ -146,34 +147,35 @@ for name, ip in instance_map.items():
 # echo;echo \#$HOSTNAME; netstat -anpo |egrep -v LISTEN |egrep ^tcp|egrep "goodfys|java|beam|mongo|pips|redis|https|:(80|443|3011|3306|23011) " | awk '{print $5}' | sort -n |uniq -c |sort --key=1 -nr |head -3|awk '{print $2,$1}' |sed "s/^/$IPADDR /g"
 
 # ===========================================================
-# # 실행서버 호스트네임
-# # 본인IP 연결많은IP:포트 연결카운트
+# # MyIP ManyConnIP:Port Count
 # 1.2.3.4 1.2.3.4:1111 111
 # 1.2.3.4 1.2.3.4:2222 22
 # 1.2.3.4 1.2.3.4:3333 33
 
-# v0.0.1 에 대한 개선필요사항
-# 1. 노드명에 포트가 있고 없고 함에 따라 그림안에 노드수가 늘어남 ( 명칭이 같아야 하나의 노드에서 화살표가 뻗어나감 )
-#   -> 콜론: 값을 가지고있는경우 = 서버[S] 노드로, 없는경우 = 클라이언트[C] 노드로 구분하여 노드를 생성하고 화살표를 그림
-#   -> 서비스포트는 노드명이 아닌 화살표 숫자옆에 표시하자
+# v0.0.1 need to fix things
+# 1. Depending on whether the node name has a port or not, the number of nodes in the graph increases (multiple arrows extend from one node if the names are the same)
+#    - If the node name contains a colon ":" and has a value, it represents a server [S] node.
+#    - If the node name does not contain a colon ":" or does not have a value, it represents a client [C] node.
+#    - Create nodes accordingly and draw arrows.
+#    - Display the service port next to the arrow instead of the node name.
 #--------------------------------------------------------------
-# 예)   1.2.3.4 1.2.3.4:1111 44
-# 표시) [C]pc11 --db:22--> [S]search33
-# 설명) 클라이언트pc11 이 서버db22 에 search33:44개 연결 되어있음
-#     S,C 빼고 화살표를 받으면 서버, 보내면 클라이언트로 인식하자
+# Example:   1.2.3.4 1.2.3.4:1111 44
+# Display: [C]pc11 --db:22--> [S]search33
+# Explanation: Client pc11 is connected to server search33:44 on port db22
+# Let's consider receiving arrows as servers and sending arrows as clients, excluding S and C
 #--------------------------------------------------------------
 
-# v0.0.2 에 대한 개선필요사항
-# 1. 그림옵션 숫자->이름 변경 설정 따로 빼기
+# v0.0.2 improvements needed
+# 1. Separate the graph options for number to name conversion
 # 2. recvQ
-# 3. established, syn_sent 갯수 확인
-#   - 초기에 ESTABLISHED 만 했다가 전부 다 추가한 이유는, Restful API 요청은 stateless 이기때문.
-# 4. ssh 접속해서 체크 자동화 --> vpn접속후 테스트
-# 5. SYN_SENT 에서 ESTABLISHED 로 바뀌는 시간 체크 --> 추후고민
+# 3. Check the number of established and syn_sent connections
+#    - Initially only checked for ESTABLISHED, but added all because Restful API requests are stateless.
+# 4. Automate checking by connecting via SSH --> Test after connecting via VPN
+# 5. Check the time it takes for SYN_SENT to transition to ESTABLISHED --> Consider later
 #
 # v0.0.3 
-# 1. 그림옵션 별도 설정파일 분리
-# 2. 체크시간 우측하단 표시
+# 1. Separate the graph options into a separate configuration file
+# 2. Display the check time in the bottom right corner
 
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -191,8 +193,8 @@ config = configparser.ConfigParser()
 # Read the configuration from the file
 config.read('name_map.conf')
 
-# 숫자를 이름으로 변경하기 위한 설정값 읽어 들인다.
-# 포트번호 -> 서비스명, 아이피주소 -> 호스트명
+# Read the configuration values for converting numbers to names.
+# Convert port numbers to service names and IP addresses to host names.
 port_service_map = {}
 for port, service in config.items('port_service_map'):
     port_service_map[port] = service
@@ -201,25 +203,24 @@ dns_name_map = {}
 for ip, name in config.items('dns_name_map'):
     dns_name_map[ip] = name
 
-# 읽어들인 이름이 너무 길어서 줄바꿈을 한다.
+# Split the long names into multiple lines for readability.
 for key, value in dns_name_map.items():
     dns_name_map[key] = value.replace('-', '\n', 1).replace('.', '\n', 2)
 
-# 'instance_checklist' 섹션에서 인스턴스 목록 읽기
+# Read instance with 'instance_checklist' Section
 instance_map = {}
 for ip, name in config.items('instance_map'):
     instance_map[ip] = name
 
 
-# 결과를 저장할 리스트 초기화
+# Initialize list for result
 filtered_lines = []
 with open('netstat.conf', 'r') as file:
 #with open('netstat_240401.txt', 'r') as file:
     for line in file:
-        # .strip()을 사용해 줄 앞뒤의 공백을 제거합니다.
         stripped_line = line.strip()
 
-        # 줄이 비어있거나 '#'으로 시작하지 않는 경우에만 리스트에 추가합니다.
+        # Append list only Blank line or not start with # comment
         if stripped_line and not stripped_line.startswith('#'):
             filtered_lines.append(stripped_line)
 
@@ -257,7 +258,7 @@ for line in filtered_lines:
 # Reverse the direction of the graph ( CLIENT -> SERVER )
 G_reversed = nx.reverse(G)
 
-# Visualize the graph : 인스턴스=node, 연결선=edge
+# Visualize the graph : Instance=node, ConnectLine=edge
 #pos = nx.spring_layout(G_reversed, k=3.5)
 # pos = nx.spiral_layout(G_reversed, resolution=0.5)
 #pos = nx.shell_layout(G_reversed)
@@ -269,33 +270,33 @@ pos = nx.circular_layout(G_reversed)
 #     edge_color="green", width=0.3, style="dashed", alpha=0.9, arrowsize=5, arrowstyle="->", connectionstyle="arc,rad=0.001", \
 #         min_source_margin=1, min_target_margin=1)
     
-# 'draw_options' 섹션에서 옵션 읽기
+# Read option with 'draw_options' Section
 options = dict(config['draw_options'])
     
-# 옵션 값을 적절한 타입으로 변환
+# Change proper type option value
 for key in options:
-    if key in ['width', 'alpha']:  # float 타입으로 변환해야 하는 경우
+    if key in ['width', 'alpha']:  
         options[key] = float(options[key])
-    elif options[key].isdigit():  # 정수 타입으로 변환
+    elif options[key].isdigit():  
         options[key] = int(options[key])
-    elif options[key] == 'True':  # 불리언 타입으로 변환 (True)
+    elif options[key] == 'True':
         options[key] = True
-    elif options[key] == 'False':  # 불리언 타입으로 변환 (False)
+    elif options[key] == 'False':
         options[key] = False
 
 
 # Draw edge labels : f"{SERVER_PORT}"
 edge_labels = nx.get_edge_attributes(G_reversed, 'label')
 
-# 그래프 시각화 설정 옵션을 사용하여 그래프 그리기
+# Drawing graph with draw options
 nx.draw(G_reversed, pos, **options)
 
 # Visualize the graph with modified edge labels
 nx.draw_networkx_edge_labels(G_reversed, pos, edge_labels=edge_labels, font_size=3, font_color="red")
 
-# 파일을 열고 첫 번째 줄만 읽기 : 체크시간을 우측하단에 표시
+# Open file and read only first line : show check time to right bottom
 with open('netstat.conf', 'r') as file:
-    CheckTime = file.readline().strip()  # .strip()을 사용하여 줄바꿈 문자 제거
+    CheckTime = file.readline().strip()  # use .strip() and move word
 
 #plt.title(subject, fontsize=5, fontweight='bold', color='blue', loc='center', pad=10)
 #plt.text(1, 0, Subject, fontsize=5, horizontalalignment='right', verticalalignment='bottom', transform=plt.gca().transAxes)
