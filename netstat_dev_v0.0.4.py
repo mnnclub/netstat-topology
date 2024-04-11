@@ -98,7 +98,7 @@ def add_ip_to_file_exclude_comments_and_blanks(filename, ip="127.0.0.1"):
     # Append IP exclude # comment or blank line
     new_lines = []
     for line in lines:
-        stripped_line = line.strip()  # 앞뒤 공백 제거
+        stripped_line = line.strip()
         if stripped_line and not stripped_line.startswith("#"):  # if not Blank line or # comment
             new_lines.append(f"{ip} {line}")
         else:
