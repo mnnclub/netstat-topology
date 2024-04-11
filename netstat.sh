@@ -1,4 +1,6 @@
 #!/bin/bash
+# Tested with Amazon Linux 2
+
 IP=`/usr/sbin/route -n|grep ^0.0.0.0|awk '{print $8}'|xargs /usr/sbin/ifconfig |grep 'inet ' |awk '{print $2}'`
 
 echo;echo \#$HOSTNAME;
