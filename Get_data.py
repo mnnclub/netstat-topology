@@ -73,7 +73,6 @@ for ip, name in config.items('instance_map'):
 
 
 ##### 서버 확인작업 메인코드 시작 #####
-# devopr / Nime1828!@
 CurrentTime = datetime.now().strftime('%Y-%m-%d %H:%M')
 with open('netstat.conf', 'w') as file:
     file.write(f"## {CurrentTime} ##\n")

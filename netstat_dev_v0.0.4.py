@@ -1,3 +1,143 @@
+# Compile Option for Mac
+# pyinstaller --onefile --windowed --distpath=./dist_mac \
+#  --icon=DALLE_hhji_20240408_Create_a_detailed_illustration_of_a_fully_connected.webp netstat_dev_v0.0.4.py
+
+import paramiko
+from scp import SCPClient, SCPException
+import getpass
+from datetime import datetime
+import configparser
+
+class SSHManager:
+    """
+    usage:
+        >>> import SSHManager
+        >>> ssh_manager = SSHManager()
+        >>> ssh_manager.create_ssh_client(hostname, username, password)
+        >>> ssh_manager.send_command("ls -al")
+        >>> ssh_manager.send_file("/path/to/local_path", "/path/to/remote_path")
+        >>> ssh_manager.get_file("/path/to/remote_path", "/path/to/local_path")
+        ...
+        >>> ssh_manager.close_ssh_client()
+    """
+    def __init__(self):
+        self.ssh_client = None
+
+    def create_ssh_client(self, hostname, port, username, password):
+        """Create SSH client session to remote server"""
+        if self.ssh_client is None:
+            self.ssh_client = paramiko.SSHClient()
+            self.ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            self.ssh_client.connect(hostname, port, username=username, password=password, timeout=5)
+        else:
+            print("SSH client session exist.")
+
+    def close_ssh_client(self):
+        """Close SSH client session"""
+        self.ssh_client.close()
+
+    def send_file(self, local_path, remote_path):
+        """Send a single file to remote path"""
+        try:
+            with SCPClient(self.ssh_client.get_transport()) as scp:
+                scp.put(local_path, remote_path, preserve_times=True)
+        except SCPException:
+            raise SCPException.message
+
+    def get_file(self, remote_path, local_path):
+        """Get a single file from remote path"""
+        try:
+            with SCPClient(self.ssh_client.get_transport()) as scp:
+                scp.get(remote_path, local_path)
+        except SCPException:
+            raise SCPException.message
+
+    def send_command(self, command):
+        """Send a single command"""
+        stdin, stdout, stderr = self.ssh_client.exec_command(command)
+        return stdout.readlines()
+
+
+    def send_command2(self, command):
+        """Send a single command"""
+        stdin, stdout, stderr = self.ssh_client.exec_command(command)
+        return stderr.readlines()
+
+
+# Create a new configparser object
+config = configparser.ConfigParser()
+
+# Read the configuration from the file
+config.read('name_map.conf')
+
+# 'instance_checklist' 섹션에서 인스턴스 목록 읽기
+instance_map = {}
+for ip, name in config.items('instance_map'):
+    instance_map[ip] = name
+
+
+##### 서버 확인작업 메인코드 시작 #####
+CurrentTime = datetime.now().strftime('%Y-%m-%d %H:%M')
+with open('netstat.conf', 'w') as file:
+    file.write(f"## {CurrentTime} ##\n")
+    
+
+USER = input('Enter USER: ')
+PW = getpass.getpass('Enter password: ')
+PORT = 22
+
+## netstat.conf 주석공백 제외한 모든라인의 맨앞에 서버IP 추가해주는 함수
+filename = "netstat.conf"
+def add_ip_to_file_exclude_comments_and_blanks(filename, ip="127.0.0.1"):
+    with open(filename, 'r') as file:  # 원본 파일 읽기
+        lines = file.readlines()
+
+    # 주석이나 공백 라인을 제외하고 IP 추가
+    new_lines = []
+    for line in lines:
+        stripped_line = line.strip()  # 앞뒤 공백 제거
+        if stripped_line and not stripped_line.startswith("#"):  # 공백 라인이 아니고 주석도 아닐 때
+            new_lines.append(f"{ip} {line}")
+        else:
+            new_lines.append(line)  # 공백 라인이나 주석 라인은 그대로 유지
+
+    with open(filename, 'w') as file:  # 수정된 내용을 파일에 쓰기
+        file.writelines(new_lines)
+
+
+# 맨위 2개 인스턴스만 테스트
+instance_map_subset = dict(list(instance_map.items())[:2])
+
+#for name, ip in instance_map_subset.items():
+for name, ip in instance_map.items():
+    print(f"Checking {name} ({ip})...")
+    HOST = ip
+    ssh_manager = SSHManager()
+    try:
+        ssh_manager.create_ssh_client(HOST,PORT,USER,PW) # 세션생성
+
+        # 0. 운영체제 버전체크
+        ssh_manager.send_file("netstat.sh", "netstat.sh") # 파일전송
+        netstat_result = ssh_manager.send_command("chmod 700 netstat.sh; ./netstat.sh") # 결과받기
+        ssh_manager.send_command("rm -f netstat.sh") # 파일삭제
+        ssh_manager.close_ssh_client()      # 세선종료
+
+#        print(netstat_result)
+
+        
+        # 결과를 파일에 추가
+        with open('netstat.conf', 'a+') as file:
+            for item in netstat_result:
+                file.write(item.strip() + '\n')
+        
+                
+    except Exception as e:
+        print(f"Error: {e}")
+        continue
+
+
+#-----------------------------------------------------------------------#
+
 
 ### for get netstat data and save graph.txt ###
 # ========== For get netstat run command and save with graph.txt ========
@@ -8,18 +148,18 @@
 # ===========================================================
 # # 실행서버 호스트네임
 # # 본인IP 연결많은IP:포트 연결카운트
-# 1.2.3.4 1.2.3.4:1111 111
-# 1.2.3.4 1.2.3.4:2222 22
-# 1.2.3.4 1.2.3.4:3333 33
+# 10.1.1.11 10.2.2.22:1122 111
+# 10.1.1.11 10.2.2.22:2233 22
+# 10.1.1.11 10.2.2.22:3344 33
 
 # v0.0.1 에 대한 개선필요사항
 # 1. 노드명에 포트가 있고 없고 함에 따라 그림안에 노드수가 늘어남 ( 명칭이 같아야 하나의 노드에서 화살표가 뻗어나감 )
 #   -> 콜론: 값을 가지고있는경우 = 서버[S] 노드로, 없는경우 = 클라이언트[C] 노드로 구분하여 노드를 생성하고 화살표를 그림
 #   -> 서비스포트는 노드명이 아닌 화살표 숫자옆에 표시하자
 #--------------------------------------------------------------
-# 예)   1.2.3.4 1.2.3.4:1111 44
-# 표시) [C]pc11 --db:22--> [S]search33
-# 설명) 클라이언트pc11 이 서버db22 에 search33:44개 연결 되어있음
+# 예)   10.1.1.11 10.2.2.22:3333 44
+# 표시) [C]client01 --redis--> [S]server01
+# 설명) 클라이언트client01 이 서버server01 에 redis서비스:44개 연결 되어있음
 #     S,C 빼고 화살표를 받으면 서버, 보내면 클라이언트로 인식하자
 #--------------------------------------------------------------
 
@@ -162,6 +302,8 @@ with open('netstat.conf', 'r') as file:
 plt.text(1, 0, CheckTime, fontsize=5, horizontalalignment='right', verticalalignment='bottom', transform=plt.gca().transAxes)
 
 plt.savefig(f"netstat_{CurrentTime}.png", dpi=300)
+
+print(f"Completed: Saved as 'netstat_{CurrentTime}.png'")
 
 #plt.show()
 #----------------------------------------------#
