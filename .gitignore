@@ -6,3 +6,5 @@ netstat_dev_v0.0.3.*
 *.conf
 png/netstat_*.png
 netstat_24*.png
+
+*.zip
