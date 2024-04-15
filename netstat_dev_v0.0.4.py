@@ -90,7 +90,7 @@ PW = getpass.getpass('Enter password: ')
 PORT = 22
 
 ## Function to add server IP at the beginning of every line in netstat.conf, excluding comments and blank lines
-filename = "netstat.conf"
+filename = "netstat.log"
 def add_ip_to_file_exclude_comments_and_blanks(filename, ip="127.0.0.1"):
     with open(filename, 'r') as file:  # Read Original File
         lines = file.readlines()
