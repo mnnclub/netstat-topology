@@ -81,7 +81,7 @@ for ip, name in config.items('instance_map'):
 
 ##### Main code for server verification starts here #####
 CurrentTime = datetime.now().strftime('%Y-%m-%d %H:%M')
-with open('netstat.conf', 'w') as file:
+with open('netstat.log', 'w') as file:
     file.write(f"## {CurrentTime} ##\n")
     
 
@@ -127,7 +127,7 @@ for name, ip in instance_map.items():
 #        print(netstat_result)
         
         # Append result to netstat.conf file
-        with open('netstat.conf', 'a+') as file:
+        with open('netstat.log', 'a+') as file:
             for item in netstat_result:
                 file.write(item.strip() + '\n')
         
@@ -215,7 +215,7 @@ for ip, name in config.items('instance_map'):
 
 # Initialize list for result
 filtered_lines = []
-with open('netstat.conf', 'r') as file:
+with open('netstat.log', 'r') as file:
 #with open('netstat_240401.txt', 'r') as file:
     for line in file:
         stripped_line = line.strip()
@@ -295,7 +295,7 @@ nx.draw(G_reversed, pos, **options)
 nx.draw_networkx_edge_labels(G_reversed, pos, edge_labels=edge_labels, font_size=3, font_color="red")
 
 # Open file and read only first line : show check time to right bottom
-with open('netstat.conf', 'r') as file:
+with open('netstat.log', 'r') as file:
     CheckTime = file.readline().strip()  # use .strip() and move word
 
 #plt.title(subject, fontsize=5, fontweight='bold', color='blue', loc='center', pad=10)
