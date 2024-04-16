@@ -1,15 +1,15 @@
 ![Network Topology](sample/DALLE_hhji_20240408_Create_a_detailed_illustration_of_a_fully_connected.webp)
-- 20240408 Create by DALLE.hhji
+- Image create by DALLE_hhji ( 20240408 )
 
 ## 설정
 ### 1. (최초) 실행전 파일: 3개
-netstat.sh : 서버내에서 체크할 스크립트명령
-name_map.conf : 주요설정파일 ( 인스턴스목록 반드시 적기 )
-netstat_v?.?.?.exe : ( 위 설정파일 읽어서 접속해서 스크립트 전송후 실행, 결과 취합해서 네트워크 토폴로지 그림1장 그린다. )
+  - netstat.sh : 서버내에서 체크할 스크립트명령
+  - name_map.conf : 주요설정파일 ( 인스턴스목록 반드시 적기 )
+  - netstat_v?.?.?.exe : ( 위 설정파일 읽어서 접속해서 스크립트 전송후 실행, 결과 취합해서 네트워크 토폴로지 그림1장 그린다. )
 
 ### 2. (실행후) 결과 파일 : 2개
-netstat.log : 인스턴스별 netstat 명령 실행결과 로그
-netstat_{CurrentTime}.png : 네트워크 토폴로지 그림 ( 위 로그파일 첫줄에 체크시간을 우측하단에 표기함 )
+  - netstat.log : 인스턴스별 netstat 명령 실행결과 로그
+  - netstat_{CurrentTime}.png : 네트워크 토폴로지 그림 ( 위 로그파일 첫줄에 체크시간을 우측하단에 표기함 )
 
 
 ## netstat.sh
