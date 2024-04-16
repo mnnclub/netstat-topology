@@ -1,7 +1,7 @@
 ![Network Topology](sample/DALLE_hhji_20240408_Create_a_detailed_illustration_of_a_fully_connected.webp)
 - Image create by DALLE_hhji ( 20240408 )
 
-## 설정
+## [ 파일설명 ]
 ### 1. (최초) 실행전 파일: 3개
   - netstat.sh : 서버내에서 체크할 스크립트명령
   - name_map.conf : 주요설정파일 ( 인스턴스목록 반드시 적기 )
@@ -10,9 +10,9 @@
 ### 2. (실행후) 결과 파일 : 2개
   - netstat.log : 인스턴스별 netstat 명령 실행결과 로그
   - netstat_{CurrentTime}.png : 네트워크 토폴로지 그림 ( 위 로그파일 첫줄에 체크시간을 우측하단에 표기함 )
+##
 
-
-## netstat.sh
+## [ netstat.sh ]
 
 ### 1. 목적/역할
 서버에 SSH로 접속하여 `netstat` 명령을 실행하는 스크립트입니다. 정규식과 조건들 때문에 소스 코드 내부가 아닌 별도의 스크립트로 작성하였습니다.
@@ -21,9 +21,9 @@
 - **Number_Of_HighLine**
   - `netstat` 스크립트는 연결이 많은 것부터 상위에 정렬합니다. 이 변수는 상위 몇 개의 라인을 표시할지 결정합니다.
   - 기본값은 3입니다. 값이 클수록 화면에 많은 정보가 표시되어 복잡해질 수 있습니다.
+##
 
-
-## name_map.conf
+## [ name_map.conf ]
 
 ### 1. 한글 사용 제한
 한글 주석을 사용하면 인코딩 에러로 인해 파일을 읽지 못할 수 있습니다.
