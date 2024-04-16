@@ -15,6 +15,7 @@
 ### 3. 맥 에서는 컴파일 해도 신뢰할수없는 프로그램 오류 떠서, 개발환경 꾸며서 실행해주세요
   - 개발환경: New Macbook 2017, Intel I5 1.3Ghz, Python3.12.2
   - 라이브러리 : requirements.txt
+    - matplotlib networkx paramiko scp getpass configparser
 
 ##
 ## [ netstat.sh ]
