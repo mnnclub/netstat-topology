@@ -12,7 +12,7 @@
   - netstat.log : 인스턴스별 netstat 명령 실행결과 로그
   - netstat_{CurrentTime}.png : 네트워크 토폴로지 그림 ( 위 로그파일 첫줄에 체크시간을 우측하단에 표기함 )
 
-### 3. 맥 에서는 컴파일 해도 신뢰할수없는 프로그램 오류 떠서, 개발환경 꾸며서 실행해주세요
+### 3. 맥 에서는 컴파일후 신뢰할수없는 없다고하여, 아래 개발환경 구성해서 실행해주세요
   - 개발환경: New Macbook 2017, Intel I5 1.3Ghz, Python3.12.2
   - 라이브러리 : requirements.txt
     - matplotlib networkx paramiko scp getpass configparser
