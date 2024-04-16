@@ -5,5 +5,6 @@ IP=`/usr/sbin/route -n|grep ^0.0.0.0|awk '{print $8}'|xargs /usr/sbin/ifconfig |
 
 echo;echo \#$HOSTNAME;
 
-/usr/bin/netstat -anpo |egrep -v LISTEN |egrep ^tcp|egrep "goodfys|java|beam|mongo|pips|redis|https|:(80|443|3011|3306|23011) " \
-| awk '{print $5}' | sort -n|uniq -c |sort --key=1 -nr |head -3|awk '{print $2,$1}' |sed "s/^/$IP /g"
+/usr/bin/netstat -anpo |egrep -v LISTEN |egrep ^tcp|egrep "goodfys|java|beam|mongo|pips|redis|https\
+|:(80|443|3010|3011|3020|3101|3306|5001|5002|5044|5672|6379|7888|8888|9600|9890|9888|15050|23001|23010|23011|61613|61616) " \
+| awk '{print $5}' | sort -n|uniq -c |sort --key=1 -nr |head -5|awk '{print $2,$1}' |sed "s/^/$IP /g"
