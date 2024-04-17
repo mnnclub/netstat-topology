@@ -35,6 +35,7 @@
 # 1. 그림옵션 별도 설정파일 분리
 # 2. 체크시간 우측하단 표시
 
+print("Draw.py start ...")
 import networkx as nx
 import matplotlib.pyplot as plt
 import configparser
@@ -42,13 +43,10 @@ from datetime import datetime
 
 CurrentTime = datetime.now().strftime('%y%m%d_%H%M')
 
-# Create a graph with nodes and edges
-G = nx.DiGraph()
-
 # Create a new configparser object
 config = configparser.ConfigParser()
 
-# Read the configuration from the file
+print("# Read the configuration from the file")
 config.read('name_map.conf')
 
 # 숫자를 이름으로 변경하기 위한 설정값 읽어 들인다.
@@ -71,7 +69,7 @@ for ip, name in config.items('instance_map'):
     instance_map[ip] = name
 
 
-# 결과를 저장할 리스트 초기화
+print("# Read the netstat data from the file")
 filtered_lines = []
 with open('netstat.log', 'r') as file:
 #with open('netstat_240401.txt', 'r') as file:
@@ -83,6 +81,9 @@ with open('netstat.log', 'r') as file:
         if stripped_line and not stripped_line.startswith('#'):
             filtered_lines.append(stripped_line)
 
+
+print(f"# Create a graph with nodes and edges : netstat_{CurrentTime}.png")
+G = nx.DiGraph()
 
 for line in filtered_lines:
     line = line.strip().split()
