@@ -74,7 +74,7 @@ for ip, name in config.items('instance_map'):
 
 ##### 서버 확인작업 메인코드 시작 #####
 CurrentTime = datetime.now().strftime('%Y-%m-%d %H:%M')
-with open('netstat.conf', 'w') as file:
+with open('netstat.log', 'w') as file:
     file.write(f"## {CurrentTime} ##\n")
     
 
@@ -82,8 +82,8 @@ USER = input('Enter USER: ')
 PW = getpass.getpass('Enter password: ')
 PORT = 22
 
-## netstat.conf 주석공백 제외한 모든라인의 맨앞에 서버IP 추가해주는 함수
-filename = "netstat.conf"
+## netstat.log 주석공백 제외한 모든라인의 맨앞에 서버IP 추가해주는 함수
+filename = "netstat.log"
 def add_ip_to_file_exclude_comments_and_blanks(filename, ip="127.0.0.1"):
     with open(filename, 'r') as file:  # 원본 파일 읽기
         lines = file.readlines()
@@ -122,7 +122,7 @@ for name, ip in instance_map.items():
 
         
         # 결과를 파일에 추가
-        with open('netstat.conf', 'a+') as file:
+        with open('netstat.log', 'a+') as file:
             for item in netstat_result:
                 file.write(item.strip() + '\n')
         
