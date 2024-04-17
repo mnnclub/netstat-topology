@@ -73,7 +73,7 @@ for ip, name in config.items('instance_map'):
 
 # 결과를 저장할 리스트 초기화
 filtered_lines = []
-with open('netstat.conf', 'r') as file:
+with open('netstat.log', 'r') as file:
 #with open('netstat_240401.txt', 'r') as file:
     for line in file:
         # .strip()을 사용해 줄 앞뒤의 공백을 제거합니다.
@@ -154,7 +154,7 @@ nx.draw(G_reversed, pos, **options)
 nx.draw_networkx_edge_labels(G_reversed, pos, edge_labels=edge_labels, font_size=3, font_color="red")
 
 # 파일을 열고 첫 번째 줄만 읽기 : 체크시간을 우측하단에 표시
-with open('netstat.conf', 'r') as file:
+with open('netstat.log', 'r') as file:
     CheckTime = file.readline().strip()  # .strip()을 사용하여 줄바꿈 문자 제거
 
 #plt.title(subject, fontsize=5, fontweight='bold', color='blue', loc='center', pad=10)
